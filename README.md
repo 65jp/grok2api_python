@@ -102,7 +102,7 @@ docker run -it -d --name grok2api_python \
   -e PORT=3000 \
   -e SHOW_THINKING=true \
   -e SSO=your_sso \
-  yxmiler/grok2api_python:latest
+  65jp/grok2api_python:latest
 ```
 
 #### 方式B：使用Docker Compose
@@ -110,7 +110,7 @@ docker run -it -d --name grok2api_python \
 version: '3.8'
 services:
   grok2api_python:
-    image: yxmiler/grok2api_python:latest
+    image: 65jp/grok2api_python:latest
     container_name: grok2api_python
     ports:
       - "3000:3000"
@@ -131,7 +131,7 @@ services:
 1. 克隆仓库
 2. 构建镜像
 ```bash
-docker build -t yourusername/grok2api .
+docker build -t 65jp/grok2api_python .
 ```
 3. 运行容器
 ```bash
@@ -145,7 +145,7 @@ docker run -it -d --name grok2api \
   -e PORT=3000 \
   -e SHOW_THINKING=true \
   -e SSO=your_sso \
-  yourusername/grok2api:latest
+  65jp/grok2api_python:latest
 ```
 
 ## 方法二：Hugging Face部署
