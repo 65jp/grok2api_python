@@ -47,7 +47,7 @@
 | 修改cf_clearance | POST | `/set/cf_clearance` | `{cf_clearance: "cf_clearance=XXXXXXXX"}` | 更新cf_clearance Cookie |
 
 ### TOKEN管理界面
-使用如下接口：http://127.0.0.1:3000/manager
+使用如下接口：http://127.0.0.1:5210/manager
 
 ![image](https://github.com/user-attachments/assets/9caedf30-5075-4edb-b5c4-96852647a43d)
 
@@ -66,13 +66,21 @@
 |`TUMY_KEY` | TUMY图床密钥，两个图床二选一 | 不填无法流式生图 | -|
 |`ISSHOW_SEARCH_RESULTS` | 是否显示搜索结果 | （可不填，默认关闭） | `true/false`|
 |`SSO` | Grok官网SSO Cookie,可以设置多个使用英文 , 分隔，我的代码里会对不同账号的SSO自动轮询和均衡 | （除非开启IS_CUSTOM_SSO否则必填） | `sso,sso`|
-|`PORT` | 服务部署端口 | （可不填，默认3000） | `3000`|
+|`PORT` | 服务部署端口 | （可不填，默认5210） | `5210`|
 |`IS_CUSTOM_SSO` | 这是如果你想自己来自定义号池来轮询均衡，而不是通过我代码里已经内置的号池逻辑系统来为你轮询均衡启动的开关。开启后 API_KEY 需要设置为请求认证用的 sso cookie，同时SSO环境变量失效。一个apikey每次只能传入一个sso cookie 值，不支持一个请求里的apikey填入多个sso。想自动使用多个sso请关闭 IS_CUSTOM_SSO 这个环境变量，然后按照SSO环境变量要求在sso环境变量里填入多个sso，由我的代码里内置的号池系统来为你自动轮询 | （可不填，默认关闭） | `true/false`|
 |`SHOW_THINKING` | 是否显示思考模型的思考过程 | （可不填，默认关闭） | `true/false`|
 
 **注意事项**：
 - 所有POST请求需要在请求体中携带相应的认证信息
 - SSO令牌和cf_clearance是敏感信息，请妥善保管
+
+## Header要求与刷新机制
+本项目新增了 `x-statsig-id` 和 `x-xai-request-id` 两个请求头，用于与官网保持一致。
+服务启动时会调用 `refresh_statsig_headers()` 函数自动更新这些 Header：
+1. 请求 `https://rui.soundai.ee/x.php` 获取最新的 `x_statsig_id`；
+2. 更新 `DEFAULT_HEADERS["x-statsig-id"]` 并生成新的随机 `x-xai-request-id`。
+
+如对代码有任何修改，务必重新构建或重启 Docker 容器，使新的 Header 设置生效。
 
 ## 方法一：Docker部署
 
@@ -83,7 +91,7 @@
 #### 方式A：直接使用Docker镜像
 ```bash
 docker run -it -d --name grok2api_python \
-  -p 3000:3000 \
+  -p 5210:5210 \
   -v $(pwd)/data:/data \
   -e IS_TEMP_CONVERSATION=false \
   -e API_KEY=your_api_key \
@@ -91,7 +99,7 @@ docker run -it -d --name grok2api_python \
   -e PICGO_KEY=你的图床key,和TUMY_KEY二选一 \
   -e IS_CUSTOM_SSO=false \
   -e ISSHOW_SEARCH_RESULTS=false \
-  -e PORT=3000 \
+  -e PORT=5210 \
   -e SHOW_THINKING=true \
   -e SSO=your_sso \
   yxmiler/grok2api_python:latest
@@ -105,7 +113,7 @@ services:
     image: yxmiler/grok2api_python:latest
     container_name: grok2api_python
     ports:
-      - "3000:3000"
+      - "5210:5210"
     volumes:
       - ./data:/data
     environment:
@@ -113,7 +121,7 @@ services:
       - IS_TEMP_CONVERSATION=true
       - IS_CUSTOM_SSO=false
       - ISSHOW_SEARCH_RESULTS=false
-      - PORT=3000
+      - PORT=5210
       - SHOW_THINKING=true
       - SSO=your_sso
     restart: unless-stopped
@@ -128,13 +136,13 @@ docker build -t yourusername/grok2api .
 3. 运行容器
 ```bash
 docker run -it -d --name grok2api \
-  -p 3000:3000 \
+  -p 5210:5210 \
   -v $(pwd)/data:/data \
   -e IS_TEMP_CONVERSATION=false \
   -e API_KEY=your_api_key \
   -e IS_CUSTOM_SSO=false \
   -e ISSHOW_SEARCH_RESULTS=false \
-  -e PORT=3000 \
+  -e PORT=5210 \
   -e SHOW_THINKING=true \
   -e SSO=your_sso \
   yourusername/grok2api:latest

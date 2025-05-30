@@ -114,7 +114,7 @@ CONFIG = {
     "SERVER": {
         "COOKIE": None,
         "CF_CLEARANCE":os.environ.get("CF_CLEARANCE") or None,
-        "PORT": int(os.environ.get("PORT", 5200))
+        "PORT": int(os.environ.get("PORT", 5210))
     },
     "RETRY": {
         "RETRYSWITCH": False,

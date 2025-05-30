@@ -26,7 +26,7 @@ if not exist ".env" (
       echo MANAGER_SWITCH=false
       echo ADMINPASSWORD=admin123
       echo CF_CLEARANCE=your_cloudflare_clearance
-      echo PORT=5200
+      echo PORT=5210
       echo SHOW_THINKING=true
       echo ISSHOW_SEARCH_RESULTS=true
       echo SSO=ssoCookie1;ssoCookie2;ssoCookie3
