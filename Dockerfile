@@ -8,7 +8,7 @@ VOLUME ["/data"]
 
 COPY . .
 
-ENV PORT=3000
-EXPOSE 3000
+ENV PORT=5210
+EXPOSE 5210
 
 CMD ["python", "app.py"]

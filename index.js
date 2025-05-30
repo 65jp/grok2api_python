@@ -35,7 +35,7 @@ const CONFIG = {
         TUMY_KEY: process.env.TUMY_KEY || null //想要流式生图的话需要填入这个TUMY图床的key 两个图床二选一，默认使用PICGO
     },
     SERVER: {
-        PORT: process.env.PORT || 3000,
+        PORT: process.env.PORT || 5210,
         BODY_LIMIT: '5mb'
     },
     RETRY: {
