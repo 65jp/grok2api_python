@@ -74,10 +74,18 @@
 - 所有POST请求需要在请求体中携带相应的认证信息
 - SSO令牌和cf_clearance是敏感信息，请妥善保管
 
+## Header要求与刷新机制
+本项目新增了 `x-statsig-id` 和 `x-xai-request-id` 两个请求头，用于与官网保持一致。
+服务启动时会调用 `refresh_statsig_headers()` 函数自动更新这些 Header：
+1. 请求 `https://rui.soundai.ee/x.php` 获取最新的 `x_statsig_id`；
+2. 更新 `DEFAULT_HEADERS["x-statsig-id"]` 并生成新的随机 `x-xai-request-id`。
+
+如对代码有任何修改，务必重新构建或重启 Docker 容器，使新的 Header 设置生效。
+
 ## 方法一：Docker部署
 
 ### 1. 获取项目
-克隆我的仓库：[grok2api](https://github.com/xLmiler/grok2api)
+克隆我的仓库：[grok2api_python](https://github.com/65jp/grok2api_python)
 ### 2. 部署选项
 
 #### 方式A：直接使用Docker镜像
