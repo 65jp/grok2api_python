@@ -149,6 +149,22 @@ DEFAULT_HEADERS = {
     'x-xai-request-id': str(uuid.uuid4())
 }
 
+
+def refresh_statsig_headers():
+    """Retrieve Statsig identifier and update request headers."""
+    try:
+        response = requests.get("https://rui.soundai.ee/x.php", timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        statsig_id = data.get("x_statsig_id")
+        if statsig_id:
+            DEFAULT_HEADERS["x-statsig-id"] = statsig_id
+            logger.info("刷新x-statsig-id成功", "Server")
+    except Exception as error:
+        logger.error(f"获取x-statsig-id失败: {error}", "Server")
+
+    DEFAULT_HEADERS["x-xai-request-id"] = str(uuid.uuid4())
+
 class AuthTokenManager:
     def __init__(self):
         self.token_model_map = {}
@@ -1035,6 +1051,8 @@ def initialization():
 
     if CONFIG["API"]["PROXY"]:
         logger.info(f"代理已设置: {CONFIG['API']['PROXY']}", "Server")
+
+    refresh_statsig_headers()
 
 logger.info("初始化完成", "Server")
 
